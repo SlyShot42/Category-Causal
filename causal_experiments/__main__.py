@@ -11,13 +11,14 @@ def main():
     parser.add_argument("--profile", choices=["full", "smoke"], default="full")
     parser.add_argument("--output-dir", type=Path, help="Defaults to experiments_output/focused/<profile>.")
     parser.add_argument("--render-only", action="store_true", help="Rebuild tables and figures from saved CSVs.")
+    parser.add_argument("--package", action="store_true", help="Export the completed full run as supplementary_material.zip.")
     args = parser.parse_args()
     if sys.flags.optimize:
         parser.error("Run without -O: the experimental correctness checks use assertions.")
     root = Path(__file__).resolve().parents[1]
     os.environ.setdefault("MPLCONFIGDIR", str(root / ".runtime" / "matplotlib"))
     os.environ.setdefault("MPLBACKEND", "Agg")
-    from .artifacts import write_paper_tables, record_presentation
+    from .artifacts import PAPER_INPUTS, write_paper_tables, record_presentation, package_supplementary
     from .experiments import (
         RunConfig, start_run, build_small_collection, run_observational_checks,
         run_observational_distributions, run_intervention_checks, run_running_example,
@@ -27,6 +28,12 @@ def main():
     from .plots import plot_running_example, plot_scaling
     import matplotlib.pyplot as plt
     out = args.output_dir or root / "experiments_output" / "focused" / args.profile
+    if args.package and args.profile != "full":
+        parser.error("--package requires --profile full.")
+    if args.render_only:
+        missing = [name for name in [*PAPER_INPUTS, "run_manifest.json"] if not (out / name).is_file()]
+        if missing:
+            parser.error("Reference CSVs are missing. Run --profile full first, or unpack supplementary_material.zip before using --render-only.")
     if not args.render_only:
         full = args.profile == "full"
         config = RunConfig(
@@ -56,6 +63,8 @@ def main():
                      diagnostics, duplication, timings, memory, supporting)
     record_presentation(out)
     print(f"Tables and figures saved to {out}")
+    if args.package:
+        print(f"Supplementary archive saved to {package_supplementary(root, out)}")
 
 
 if __name__ == "__main__":

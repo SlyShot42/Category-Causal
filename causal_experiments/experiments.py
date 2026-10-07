@@ -123,7 +123,7 @@ def start_run(root, config, notebook_path=None, output_dir=None):
         "python": platform.python_version(), "python_implementation": platform.python_implementation(),
         "platform": platform.platform(), **hardware_details(),
         "packages": {name: importlib.metadata.version(name) for name in
-                     ["jupyterlab", "ipykernel", "ipython", "nbformat", "nbclient", "matplotlib", "numpy", "pandas", "tabulate"]},
+                     ["jupyterlab", "ipykernel", "ipython", "nbformat", "nbclient", "matplotlib", "numpy", "pandas"]},
         "notebook_code_sha256": hashlib.sha256(code.encode()).hexdigest(),
         "helper_sha256": {str(p.relative_to(root)): hashlib.sha256(p.read_bytes()).hexdigest() for p in helpers},
         "revision": "unversioned workspace; exact helper and notebook hashes recorded",
@@ -405,7 +405,7 @@ def run_diagnostics(run):
     DIAGNOSTICS = write_csv("diagnostics.csv", DIAGNOSTIC_ROWS)
     MANIFEST["completed"]["E2"] = {"fixtures": len(FIXTURES), "mode_checks": len(DIAGNOSTICS), "passed": True}
     dump_json(OUT / "run_manifest.json", MANIFEST)
-    DIAGNOSTICS["scope"] = ["CO10" if int(fid[1:]) <= 15 else "supporting" for fid in DIAGNOSTICS.fixture]
+    DIAGNOSTICS["scope"] = ["primary" if int(fid[1:]) <= 15 else "supporting" for fid in DIAGNOSTICS.fixture]
     DIAGNOSTICS.to_csv(OUT / "diagnostics.csv", index=False)
     run.complete("Q2_diagnostics", primary_fixtures=15, supporting_fixtures=4, mode_checks=len(DIAGNOSTICS))
     return DIAGNOSTICS, suite, FIXTURE_ASSEMBLIES
@@ -664,7 +664,7 @@ def finalize_run(run, correctness, observational, interventions, distributions,
         "ground_generation_configurations": correctness.groupby(["n_endogenous", "family", "seed"]).ngroups,
         "distinct_semantic_scenarios": scenarios,
         "route_assignment_checks": int(observational.assignments.sum() + interventions.assignments.sum()),
-        "law_route_cases": len(distributions), "CO10_fixtures": int(diagnostics[diagnostics.scope == "CO10"].fixture.nunique()),
+        "law_route_cases": len(distributions), "primary_fixtures": int(diagnostics[diagnostics.scope == "primary"].fixture.nunique()),
         "supporting_fixtures": int(diagnostics[diagnostics.scope == "supporting"].fixture.nunique()),
         "fixture_mode_checks": len(diagnostics), "paired_method_cases": len(duplication),
         "faithful_duplicated_diagrams": int(duplication[(duplication.variant == "faithful") & (duplication.copied_mechanisms > 0)].instance.nunique()),
@@ -676,7 +676,7 @@ def finalize_run(run, correctness, observational, interventions, distributions,
         {"question": "Q1: recover model and behavior", "measurement": "Diagrams reconstructed through both routes", "executed": len(correctness), "discrepancies": 0},
         {"question": "Q1: recover model and behavior", "measurement": "Unique assignment/intervention scenarios", "executed": scenarios, "discrepancies": 0},
         {"question": "Q1: recover model and behavior", "measurement": "Exact law/route cases", "executed": len(distributions), "discrepancies": 0},
-        {"question": "Q2: diagnose composition", "measurement": "CO-10 fixture/mode classifications", "executed": int((diagnostics.scope == "CO10").sum()), "discrepancies": 0},
+        {"question": "Q2: diagnose composition", "measurement": "Primary fixture/mode classifications", "executed": int((diagnostics.scope == "primary").sum()), "discrepancies": 0},
         {"question": "Q2: diagnose composition", "measurement": "Paired assembly method cases", "executed": len(duplication), "discrepancies": 0},
         {"question": "Q3: characterize cost", "measurement": "Correctness-checked structural repetitions", "executed": len(timings), "discrepancies": 0},
     ]

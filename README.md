@@ -4,6 +4,13 @@ This anonymous supplement contains the experiment notebook, helper modules,
 generated descriptors, independently checked certificates, measured CSVs, and
 paper figures. The code is licensed under MIT; see `LICENSE`.
 
+The supplementary archive includes the reference run in
+`experiments_output/focused/full/` (descriptors, certificates, CSVs, figures,
+and `run_manifest.json`). A code-only copy of this repository does not include
+that directory; run the full command below to regenerate it before using
+`--render-only`. Submit the supplementary ZIP for anonymous review; a normal
+GitHub URL and Git history retain account and author information.
+
 ## Installation
 
 The reference environment uses **Python 3.13.5**. From this directory:
@@ -44,19 +51,37 @@ the table are relative to `experiments_output/focused/full/`.
 | Paper item | Command after installation | Notebook cells | Output and measured inputs |
 | --- | --- | --- | --- |
 | Table 2: paired duplicate comparison | `.venv/bin/python -m causal_experiments --profile full --render-only` | B4, B9, B13 | `duplicate_acceptance.csv`, from `duplication_summary.csv` |
+| Table 3: executed exact checks | `.venv/bin/python -m causal_experiments --profile full --render-only` | B4–B6, B13 | `exact_checks_summary.csv`, from `correctness.csv`, `evaluation_checks.csv`, `intervention_checks.csv`, and `distribution_checks.csv` |
 | Table 4: diagnostic outcomes | `.venv/bin/python -m causal_experiments --profile full --render-only` | B8, B13 | `diagnostic_summary.csv`, from `diagnostics.csv` |
-| Table 5: all structural settings | `.venv/bin/python -m causal_experiments --profile full --render-only` | B10, B13 | `appendix_scaling_summary.csv`, from `timing_summary.csv` and `memory.csv` |
-| Table 6: median stage times | `.venv/bin/python -m causal_experiments --profile full --render-only` | B10, B13 | `appendix_stage_summary_ms.csv`, from `timings.csv` |
+| Table 5: structural resources at `n=10000` | `.venv/bin/python -m causal_experiments --profile full --render-only` | B10, B13 | Rows with `n=10000` in `appendix_scaling_summary.csv`, from `timing_summary.csv` and `memory.csv` |
 | Figure 2: runtime | `.venv/bin/python -m causal_experiments --profile full --render-only` | B10–B11 | `figures/runtime.{pdf,png,svg}`, from timing CSVs |
 | Figure 3: running example | `.venv/bin/python -m causal_experiments --profile full --render-only` | B7 | `figures/running_example.{pdf,png,svg}`, from `running_example_values.csv` and `running_example_response.csv` |
-| Figure 4: stage contributions | `.venv/bin/python -m causal_experiments --profile full --render-only` | B10–B11 | `figures/stage_breakdown.{pdf,png,svg}`, from `timings.csv` |
+| Figure 4: stage contributions | `.venv/bin/python -m causal_experiments --profile full --render-only` | B10–B11 | `figures/stage_breakdown.{pdf,png,svg}` and `appendix_stage_summary_ms.csv`, from `timings.csv` |
 | Figure 5: traced allocation | `.venv/bin/python -m causal_experiments --profile full --render-only` | B10–B11 | `figures/memory.{pdf,png,svg}`, from `memory.csv` |
 
-The runtime image is called `runtimefigs.png` in the manuscript. Table 2 reports
-accepted counts out of 180 diagrams per condition. Table 4 includes F01–F15 and
-the supporting F16–F19 fixtures. Table 5 covers all 27 size/module/copy settings;
-Table 6 reports milliseconds at `n=10000`. Round exported CSV values to the
-precision used in the manuscript.
+The manuscript uses these image names: `runtimefigs.png` (Figure 2, from
+`figures/runtime.png`), `runningexample.png` (Figure 3, from
+`figures/running_example.png`), `stagebreakdown.png` (Figure 4, from
+`figures/stage_breakdown.png`), and `memoryfigs.png` (Figure 5, from
+`figures/memory.png`). Table 1 and Figure 1 are analytic and have no generated
+output. Table 2 reports accepted counts out of 180 diagrams per condition.
+Table 4 includes F01–F15 and the supporting F16–F19 fixtures.
+`appendix_scaling_summary.csv` covers all 27 size/module/copy settings; Table 5
+shows the nine settings at `n=10000`. `appendix_stage_summary_ms.csv` gives the
+stage medians in milliseconds plotted in Figure 4. Round exported CSV values to
+the precision used in the manuscript.
+
+Rebuild the anonymous submission archive after changing released files:
+
+```sh
+.venv/bin/python -m causal_experiments --profile full --render-only --package
+```
+
+This writes `supplementary_material.zip` containing only the source, README,
+license, requirements, tests, and completed reference artifacts. It excludes Git
+history, environments, caches, and unrelated files, checks for identifying paths
+and email addresses, and includes `SHA256SUMS`. From a code-only copy, run the
+full profile first. The archive's artifact paths match the paths above.
 
 For interactive execution:
 
@@ -125,24 +150,24 @@ semantic checks are exact.
 
 ## Artifacts and provenance
 
-`datasets/` holds ground equations, module/interface records, mechanism
+Within `experiments_output/focused/full/`, `datasets/` holds ground equations, module/interface records, mechanism
 libraries, configurations/seeds, noise-law descriptions, and oracle-only ground
 correspondences. `certificates/` holds structural certificates, diagnostic
 witnesses, and representative intervention certificates; all intervention
 certificates are checked during execution. CSVs hold numerical results.
 `run_manifest.json` records configuration, counts, environment, and SHA-256 hashes.
 
-The supplied run preserves its original measurement/source hashes. Its `release`
-entry records the cleaned notebook and current helper hashes separately. Cleanup
-removed absolute paths, local PDF prerequisites, and prose-report generation;
-experimental algorithms and numerical measurements are retained. New runs record
-the released source hashes directly. The package excludes Git history,
-environments/caches, audit walkthroughs, narrative reports, and identifying paths.
+The reference run's `release` entry records the current notebook/helper hashes
+and hashes of the released CSVs. `measurement_csv_sha256` retains the original
+CSV hashes before metadata labels were renamed. Numerical measurements are
+unchanged; diagnostic scope is now `primary` or `supporting`, and obsolete
+private-document provenance is omitted. New runs record the released source
+hashes directly. The package excludes Git history, environments/caches,
+walkthroughs, narrative reports, and identifying paths.
 
 ## Software citations and licenses
 
-`aistats27-refs.bib` contains software entries for addition to the manuscript's
-existing bibliography:
+The manuscript cites the scientific libraries used:
 
 - Harris et al. (2020), *Array programming with NumPy*, Nature 585, 357–362.
   [NumPy citation](https://numpy.org/citing-numpy/).
