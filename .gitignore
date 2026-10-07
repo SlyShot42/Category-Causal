@@ -1,0 +1,27 @@
+.venv/
+.runtime/
+.ipynb_checkpoints/
+.virtual_documents/
+tmp/
+__pycache__/
+experiments_output/
+
+# Local references, planning documents, and presentation drafts.
+/AISTATS CO10 Change Order.md
+/Category Causal (3).pdf
+/Faller 24A.pdf
+/AUDIT_GUIDE.md
+/category_causal_audit.ipynb
+/archive/
+/causal_experiments/reports.py
+/simulated_experiments_preview.tex
+/submission_edits.tex
+/paper_figures_readable.zip
+/runtimefigs.*
+
+# Submission archives are generated from an explicit file list.
+/supplementary_material.zip
+.DS_Store
+*.pyc
+*.pdf
+*.bib
